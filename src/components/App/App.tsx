@@ -1,31 +1,26 @@
-import useTasks from '../../hooks/useTasks';
+import React, { useContext } from 'react';
+import { TasksContext } from '../../contexts/TasksContext';
 import Accordion from '../Accordion';
+import LoadingBar from '../LoadingBar';
 
-import { Box, Container } from './styles';
-
-type Group = {
-  name: string;
-  tasks: Array<{ description: string; value: number; checked: boolean }>;
-}
+import { Box, Container, Header } from './styles';
 
 function App() {
-  const { data, isLoading } = useTasks();
+  const {
+    computedData,
+    groups,
+    isLoading
+  } = useContext(TasksContext);
 
   return (
     <Container>
       <Box>
-        <h2>Lodgify Grouped Tasks</h2>
-
+        <Header>
+          <h2>Lodgify Grouped Tasks</h2>
+          <LoadingBar total={computedData?.gTotal ?? 0} completed={computedData?.gCompleted ?? 0} />
+        </Header>
         <div>
-          {!isLoading && (
-            data.map((group: Group) => (
-              <Accordion
-                key={group.name}
-                groupName={group.name}
-                tasks={group.tasks}
-              />
-            ))
-          )}
+          {!isLoading && groups.map((group, groupIndex) => <Accordion key={groupIndex} group={group} groupIndex={groupIndex} />)}
         </div>
       </Box>
     </Container>

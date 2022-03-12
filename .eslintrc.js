@@ -1,45 +1,41 @@
 module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
-    jest: true,
+  'env': {
+    'browser': true,
+    'es2021': true
   },
-  extends: [
+  'extends': [
+    'eslint:recommended',
     'plugin:react/recommended',
-    'airbnb',
+    'plugin:@typescript-eslint/recommended'
   ],
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
+  'parser': '@typescript-eslint/parser',
+  'parserOptions': {
+    'ecmaFeatures': {
+      'jsx': true
     },
-    ecmaVersion: 'latest',
-    sourceType: 'module',
+    'ecmaVersion': 'latest',
+    'sourceType': 'module'
   },
-  plugins: [
+  'plugins': [
     'react',
-    '@typescript-eslint',
+    '@typescript-eslint'
   ],
-  rules: {
-    'react/jsx-filename-extension': [2, { extensions: ['.ts', '.tsx'] }],
-    'react/jsx-uses-react': 'off',
-    'react/react-in-jsx-scope': 'off',
-    'import/no-default-export': 'off',
-    'no-restricted-exports': 'off',
-    'prefer-default-exports': 'off',
-    'no-unused-vars': 'warn',
-    'import/extensions': [
+  'rules': {
+    'indent': [
       'error',
-      'ignorePackages',
-      {
-        ts: 'never',
-        tsx: 'never',
-      },
+      2
     ],
-  },
-  settings: {
-    'import/resolver': {
-      typescript: {},
-    },
-  },
+    'linebreak-style': [
+      'error',
+      'unix'
+    ],
+    'quotes': [
+      'error',
+      'single'
+    ],
+    'semi': [
+      'error',
+      'always'
+    ]
+  }
 };

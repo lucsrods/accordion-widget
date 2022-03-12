@@ -26,16 +26,20 @@ export const AccordionHeader = styled.header`
   }
 `;
 
-export const AccordionContent = styled.ul`
+export const AccordionContent = styled.ul<{ height: number }>`
   list-style: none;
   padding: 0;
+  margin: 0;
+  overflow: hidden;
 
   &.hide {
-    display: none;
+    height: 0;
+    transition: height 0.4s ease-in-out;
  }
 
   &.show {
-    display: block;
+    height: ${({height}) => height}px;
+    transition: height 0.4s ease-in-out;
   }
 
   li {
@@ -49,6 +53,10 @@ export const AccordionContent = styled.ul`
       display: inline;
     }
   }
+`;
+
+export const Label = styled.label`
+  cursor: pointer;
 `;
 
 export default {};

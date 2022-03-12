@@ -1,30 +1,43 @@
-import React, { useState } from 'react';
-import { AccordionContent, AccordionHeader, AccordionWrapper } from './styles';
+import React, { useContext, useState } from 'react';
+import { TasksContext } from '../../contexts/TasksContext';
+import { AccordionContent, AccordionHeader, AccordionWrapper, Label } from './styles';
 
 type Props = {
-  groupName: string;
-  tasks: Array<{ description?: string; value: number; checked: boolean; name?: string }>;
+  groupIndex: number;
+  group: {
+    name: string;
+    tasks: Array<{ description?: string; value: number; checked: boolean; name?: string }>;
+  } 
 }
 
-function Accordion({ groupName, tasks }: Props) {
+const LINE_HEIGHT = 36;
+
+function Accordion({
+  groupIndex,
+  group
+}: Props) {
+  const { name, tasks } = group;
   const [isAccordionOpen, setAccordionOpen] = useState(false);
+  const { toggleTask } = useContext(TasksContext);
+
   const toggleMessage = () => (isAccordionOpen ? 'Hide' : 'Show');
 
   return (
     <AccordionWrapper>
       <AccordionHeader>
         <h3>
-          {groupName}
+          {name}
         </h3>
-        <button type="button" aria-label={`${toggleMessage()} ${groupName}`} onClick={() => setAccordionOpen(!isAccordionOpen)}>{toggleMessage()}</button>
+        <button type="button" aria-label={`${toggleMessage()} ${name}`} onClick={() => setAccordionOpen(!isAccordionOpen)}>{toggleMessage()}</button>
       </AccordionHeader>
-      <AccordionContent className={isAccordionOpen ? 'show' : 'hide'}>
-        {tasks.map((task) => (
+      <AccordionContent className={isAccordionOpen ? 'show' : 'hide'} height={tasks.length * LINE_HEIGHT}>
+        {tasks.map((task, taskIndex) => (
           <li
             key={task?.description ?? task?.name}
           >
-            <input type="checkbox" checked={task.checked} />
-            <p>{task?.description ?? task?.name}</p>
+            <Label>
+              <input type="checkbox" checked={task.checked} onChange={() => toggleTask(groupIndex, taskIndex)} />{task?.description ?? task?.name}
+            </Label>
           </li>
         ))}
       </AccordionContent>

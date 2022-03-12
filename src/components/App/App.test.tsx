@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import App from './App';
+import TaskContextProvider from '../../contexts/TasksContext';
 
 jest.mock('swr', () => ({
   __esModule: true,
@@ -13,12 +14,12 @@ jest.mock('swr', () => ({
         tasks: [
           {
             description: 'Add name and surname',
-            value: 10,
-            checked: true,
+            value: 50,
+            checked: false,
           },
           {
             description: 'Add email',
-            value: 15,
+            value: 50,
             checked: false,
           },
         ],
@@ -29,8 +30,11 @@ jest.mock('swr', () => ({
 }));
 
 describe('App', () => {
+  beforeEach(() => {
+    render(<TaskContextProvider><App /></TaskContextProvider>);
+  });
+
   it('should be able to toggle the accordion', async () => {
-    render(<App />);
 
     const toggleAccordionBtn = screen.getByLabelText(/show general infos/i);
     expect(screen.getByText(/show/i)).toBeInTheDocument();
@@ -43,11 +47,18 @@ describe('App', () => {
   });
 
   it('should be able to display the tasks when the accordion is open', () => {
-    render(<App />);
-
     userEvent.click(screen.getByLabelText(/show general infos/i));
 
     expect(screen.getByText(/add name and surname/i)).toBeVisible();
     expect(screen.getByText(/add email/i)).toBeVisible();
+  });
+
+  it('should be able to check tasks as done, updating the normalized value', async () => {
+    userEvent.click(screen.getByLabelText(/show general infos/i));
+
+    expect(screen.getByText('0%')).toBeInTheDocument();
+    
+    userEvent.click(screen.getByLabelText(/add email/i));
+    expect(screen.getByText('50%')).toBeInTheDocument();
   });
 });
