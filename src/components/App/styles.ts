@@ -14,4 +14,15 @@ export const Box = styled.div`
   border-radius: 8px;
   background: white;
   width: 400px;
+
+  div {
+    &:first-child {
+      border-radius: 8px 8px 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 8px 8px;
+      border-bottom: 1px solid #ddd;
+    }
+  }
 `;
