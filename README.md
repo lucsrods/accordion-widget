@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Preview
+
+![Preview](./preview.gif)
+
 ## Available Scripts
 
 > Make sure you're using node ^14.17.0
