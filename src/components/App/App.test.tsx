@@ -58,7 +58,7 @@ describe('App', () => {
 
     expect(screen.getByText('0%')).toBeInTheDocument();
     
-    userEvent.click(screen.getByLabelText(/add email/i));
+    userEvent.click(screen.getByLabelText(/add name and surname/i));
     expect(screen.getByText('50%')).toBeInTheDocument();
   });
 });

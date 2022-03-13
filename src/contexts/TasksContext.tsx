@@ -4,32 +4,66 @@ import useSWR from 'swr';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 import fetcher from '../utils/fetcher';
 
-export const TasksContext = createContext({
-  groups: [],
-  isLoading: true,
-  toggleTask: (groupIndex: number, taskIndex: number) => null,
-  computedData: {
-    gTotal: 0,
-    gCompleted: 0,
-  }
-});
-
-function TaskContextProvider(props: any) {
-  const { data } = useSWR(process.env.REACT_APP_API, fetcher);
-  const [groups, setGroups] = useState<Array<{ name: string; tasks: Array<{
+type Group = {
+  name: string;
+  completed: boolean;
+  tasks: Array<{
     name?: string;
     description?: string;
     value: number;
     checked: boolean;
-  }> }>>([]);
+  }>
+}
+
+type TasksContextType = {
+  groups: Array<Group>
+  isLoading: boolean;
+  toggleTask?: (groupIndex: number, taskIndex: number) => void;
+  computedData: {
+    gTotal: number,
+    gCompleted: number
+  }
+}
+
+type Task = {
+  name?: string;
+  description?: string;
+  value: number;
+  checked: boolean;
+}
+
+type TaskComputedData = {
+  tTotal: number;
+  tCompleted: number;
+}
+
+type GroupComputedData = {
+  gTotal: number;
+  gCompleted: number;
+}
+
+const initialState = {
+  groups: [],
+  isLoading: true,
+  computedData: {
+    gTotal: 0,
+    gCompleted: 0
+  }
+};
+
+export const TasksContext = createContext<TasksContextType>(initialState);
+
+function TaskContextProvider({ children }: { children: React.ReactNode }) {
+  const { data } = useSWR(process.env.REACT_APP_API, fetcher);
+  const [groups, setGroups] = useState<Array<Group>>([]);
 
   const [computedData, setComputedData] = useState({
     gTotal: 0,
     gCompleted: 0,
   });
 
-  const getComputedData = () => data?.reduce((acc: any, curr: any) => {
-    const tasksTotal = curr.tasks.reduce((tasksAcc: any, tasksCurr: any) => {
+  const getComputedData = () => data?.reduce((acc: GroupComputedData, curr: Group) => {
+    const tasksTotal = curr.tasks.reduce((tasksAcc: TaskComputedData, tasksCurr: Task) => {
       let completed = tasksAcc.tCompleted;
       const total = tasksCurr.value + tasksAcc.tTotal;
 
@@ -60,8 +94,19 @@ function TaskContextProvider(props: any) {
 
 
   useDeepCompareEffect(() => {  
+    if (!data) return;
+
+    const tempGroups = data.map((group: Group) => {
+      const hasUnfinishedTasks = group.tasks.some((task: Task) => !task.checked);
+
+      return {
+        ...group,
+        completed: !hasUnfinishedTasks
+      };
+    });
+
     setComputedData(getComputedData());
-    setGroups(data);
+    setGroups(tempGroups);
   }, [data || {}]);
 
   const toggleTask = (groupIndex: number, taskIndex: number) => {
@@ -73,6 +118,9 @@ function TaskContextProvider(props: any) {
 
     tempTask.checked = !tempTask.checked;
     tempGroups[groupIndex].tasks[taskIndex] = tempTask;
+
+    const hasUnfinishedTasks = tempGroups[groupIndex].tasks.some(({ checked }) => !checked);
+    tempGroups[groupIndex].completed = !hasUnfinishedTasks;
 
     if (tempTask.checked) {
       tempComputedData.gCompleted += tempTask.value;
@@ -87,8 +135,9 @@ function TaskContextProvider(props: any) {
   return (
     <TasksContext.Provider
       value={{ groups, isLoading: !groups, toggleTask, computedData }}
-      {...props}
-    />
+    >
+      {children}
+    </TasksContext.Provider>
   );
 }
 
