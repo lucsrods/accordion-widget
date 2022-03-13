@@ -2,18 +2,9 @@ import React from 'react';
 import { createContext, useState } from 'react';
 import useSWR from 'swr';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import fetcher from '../utils/fetcher';
 
-type Group = {
-  name: string;
-  completed: boolean;
-  tasks: Array<{
-    name?: string;
-    description?: string;
-    value: number;
-    checked: boolean;
-  }>
-}
+import { Group } from '@customTypes/Group';
+import fetcher from '@customUtils/fetcher';
 
 type TasksContextType = {
   groups: Array<Group>
@@ -119,7 +110,7 @@ function TaskContextProvider({ children }: { children: React.ReactNode }) {
     tempTask.checked = !tempTask.checked;
     tempGroups[groupIndex].tasks[taskIndex] = tempTask;
 
-    const hasUnfinishedTasks = tempGroups[groupIndex].tasks.some(({ checked }) => !checked);
+    const hasUnfinishedTasks = tempGroups[groupIndex].tasks.some(({ checked }: { checked: boolean }) => !checked);
     tempGroups[groupIndex].completed = !hasUnfinishedTasks;
 
     if (tempTask.checked) {

@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard, faCheckCircle } from '@fortawesome/free-regular-svg-icons';  
 
-import { TasksContext } from '../../contexts/TasksContext';
+import { TasksContext } from '@contexts/TasksContext';
 
 import { AccordionContent, AccordionHeader, AccordionWrapper, Label, ToggleText } from './styles';
 
