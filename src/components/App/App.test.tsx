@@ -2,8 +2,9 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import TaskContextProvider from '@contexts/TasksContext';
+
 import App from './App';
-import TaskContextProvider from '../../contexts/TasksContext';
 
 jest.mock('swr', () => ({
   __esModule: true,

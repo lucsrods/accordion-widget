@@ -13,7 +13,8 @@ type TasksContextType = {
   computedData: {
     gTotal: number,
     gCompleted: number
-  }
+  },
+  error: Error | null
 }
 
 type Task = {
@@ -39,15 +40,21 @@ const initialState = {
   computedData: {
     gTotal: 0,
     gCompleted: 0
-  }
+  },
+  error: null
 };
 
 export const TasksContext = createContext<TasksContextType>(initialState);
 
 function TaskContextProvider({ children }: { children: React.ReactNode }) {
-  const { data } = useSWR(process.env.REACT_APP_API, fetcher);
-  const [groups, setGroups] = useState<Array<Group>>([]);
+  const { data, error } = useSWR(process.env.REACT_APP_API, fetcher, {
+    onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+      if (retryCount === 3) return;
 
+      setTimeout(() => revalidate({ retryCount }), 5000);
+    }
+  });
+  const [groups, setGroups] = useState<Array<Group>>([]);
   const [computedData, setComputedData] = useState({
     gTotal: 0,
     gCompleted: 0,
@@ -125,7 +132,7 @@ function TaskContextProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <TasksContext.Provider
-      value={{ groups, isLoading: !groups, toggleTask, computedData }}
+      value={{ groups, isLoading: !groups.length, toggleTask, computedData, error }}
     >
       {children}
     </TasksContext.Provider>

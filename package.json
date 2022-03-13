@@ -40,6 +40,14 @@
       "react-app/jest"
     ]
   },
+  "jest": {
+    "moduleNameMapper": {
+      "^@components(.*)$": "<rootDir>/src/components$1",
+      "^@contexts(.*)$": "<rootDir>/src/contexts$1",
+      "^@customUtils(.*)$": "<rootDir>/src/utils$1",
+      "^@customTypes(.*)$": "<rootDir>/src/types$1"
+    }
+  },
   "browserslist": {
     "production": [
       ">0.2%",
